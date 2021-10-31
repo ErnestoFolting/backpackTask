@@ -25,6 +25,15 @@ struct backpack
 			population.push_back(solution(tempBool,items));
 		}
 	}
+	int record() {
+		int record = 0;
+		for (int i = 0; i < 100; i++) {
+			if (population[i].allValue > record){
+				record = population[i].allValue;
+			}
+		}
+		return record;
+	}
 	backpack() {
 		generateItems();
 		startPopulation();
