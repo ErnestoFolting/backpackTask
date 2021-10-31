@@ -34,17 +34,78 @@ struct backpack
 		}
 		return record;
 	}
+	solution cross(solution S1, solution S2) {
+		vector<bool> vec(100, 0);
+		for (int i = 0; i < 100; i++) {
+			if (i >= 0 && i < 25) {
+				vec[i] = S1.sol[i];
+			}
+			else if (i >= 25 && i < 50) {
+				vec[i] = S2.sol[i];
+			}
+			else if (i >= 50 && i < 75) {
+				vec[i] = S1.sol[i];
+			}
+			else if (i >= 75 && i < 100) {
+				vec[i] = S2.sol[i];
+			}
+		}
+		solution res(vec, items);
+		return res;
+	}
+	void debug(vector<bool> vec) {
+		cout << "Vector: " << endl;
+		for (int i = 0; i < vec.size(); i++) {
+			cout << vec[i] << ' ';
+		}
+		cout << endl;
+	}
+	void mutation(solution& afterCross) {
+		int chance = rand() % 100;
+		if (chance < 100) {
+			int posToChange = rand() % 100;
+			if (afterCross.sol[posToChange] == 0) {
+				afterCross.sol[posToChange] = 1;
+			}
+			else {
+				afterCross.sol[posToChange] = 0;
+			}
+		}
+	}
+	void localUpgrade(solution& afterCross) {
+		int min = 31;
+		int index = 0;
+		for (int i = 0; i < 100; i++) {
+			if (items[i].weight < min && afterCross.sol[i] != 1) {
+				min = items[i].weight;
+				index = i;
+			}
+		}
+		afterCross.sol[index] = 1;
+	}
 	backpack() {
 		generateItems();
 		startPopulation();
-		for (int i = 0; i < population[0].sol.size(); i++) {
-			cout << population[0].sol[i] << ' ';
+		for (int iterations = 0; iterations < 1; iterations++) {
+			int pos1 = rand() % 100;
+			int pos2 = 0;
+			for (int i = 0; i < 100; i++) {
+				if (population[i].allValue == record()) {
+					pos2 = i;
+					break;
+				}
+			}
+			solution S1 = population[pos1];
+			solution S2 = population[pos2];
+			solution afterCross = cross(S1, S2);
+			debug(S1.sol);
+			debug(S2.sol);
+			debug(afterCross.sol);
+			mutation(afterCross);
+			debug(afterCross.sol);
+			localUpgrade(afterCross);
+			debug(afterCross.sol);
 		}
-		cout << "item" << items[0].value << ' ' << items[0].weight << endl;
-		cout << endl;
-		cout << population[0].allValue << endl;
-		cout << population[0].allWeight << endl;
-		cout << population[0].koef << endl;
 	}
 };
 
