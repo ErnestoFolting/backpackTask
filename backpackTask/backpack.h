@@ -124,6 +124,9 @@ struct backpack
 					maxValue = population[i].allValue;
 				}
 			}
+			if (pos2 == pos1) {
+				pos1 = rand() % 100;
+			}
 			solution S1 = population[pos1];
 			solution S2 = population[pos2];
 			solution afterCross = cross(S1, S2);
