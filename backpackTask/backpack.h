@@ -22,16 +22,19 @@ struct backpack
 		for (int i = 0; i < 100; i++) {
 			vector<bool> tempBool(100, 0);
 			tempBool[i] = 1;
-			population.push_back(solution(tempBool,items));
+			population.push_back(solution(tempBool, items));
 		}
 	}
 	int record() {
 		int record = 0;
+		int index = 0;
 		for (int i = 0; i < 100; i++) {
-			if (population[i].allValue > record){
+			if (population[i].allValue > record) {
 				record = population[i].allValue;
+				index = i;
 			}
 		}
+		cout << "weight: " <<  population[index].allWeight << endl;
 		return record;
 	}
 	solution cross(solution S1, solution S2) {
@@ -62,7 +65,7 @@ struct backpack
 	}
 	void mutation(solution& afterCross) {
 		int chance = rand() % 100;
-		if (chance < 100) {
+		if (chance < 5) {
 			int posToChange = rand() % 100;
 			if (afterCross.sol[posToChange] == 0) {
 				afterCross.sol[posToChange] = 1;
@@ -72,8 +75,26 @@ struct backpack
 			}
 		}
 	}
+	void add(solution afterCross) {
+		int worstIndex = 0;
+		double minValue = INT_MAX;
+		for (int i = 0; i < 100; i++) {
+			if (population[i].allValue < minValue) {
+				minValue = population[i].allValue;
+				worstIndex = i;
+			}
+		}
+		population.push_back(afterCross);
+		vector<solution> tempPopulation;
+		for (int i = 0; i < population.size(); i++) {
+			if (i != worstIndex) {
+				tempPopulation.push_back(population[i]);
+			}
+		}
+		population = tempPopulation;
+	}
 	void localUpgrade(solution& afterCross) {
-		int min = 31;
+		double min = 31;
 		int index = 0;
 		for (int i = 0; i < 100; i++) {
 			if (items[i].weight < min && afterCross.sol[i] != 1) {
@@ -86,25 +107,30 @@ struct backpack
 	backpack() {
 		generateItems();
 		startPopulation();
-		for (int iterations = 0; iterations < 1; iterations++) {
+		for (int iterations = 0; iterations < 1000; iterations++) {
 			int pos1 = rand() % 100;
+			cout << "pos:**************************************" << pos1 << endl;
 			int pos2 = 0;
+			int maxValue = 0;
 			for (int i = 0; i < 100; i++) {
-				if (population[i].allValue == record()) {
+				if (population[i].allValue > maxValue) {
 					pos2 = i;
-					break;
+					maxValue = population[i].allValue;
 				}
 			}
+			cout << "pos2:???????????????????????"<< pos2 << endl;
 			solution S1 = population[pos1];
 			solution S2 = population[pos2];
 			solution afterCross = cross(S1, S2);
-			debug(S1.sol);
-			debug(S2.sol);
-			debug(afterCross.sol);
 			mutation(afterCross);
-			debug(afterCross.sol);
 			localUpgrade(afterCross);
-			debug(afterCross.sol);
+			if (afterCross.allWeight <= 250) {
+				add(afterCross);
+				cout << "i------" << iterations << endl;
+				cout << population.size();
+				debug(afterCross.sol);
+				cout << "RECORD:    " << record();
+			}
 		}
 	}
 };

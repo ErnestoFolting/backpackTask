@@ -4,7 +4,7 @@ struct item
 	double value;
 	double weight;
 	double koef;
-	item(int val, int wei) {
+	item(double val, double wei) {
 		value = val;
 		weight = wei;
 		koef = val / wei;
