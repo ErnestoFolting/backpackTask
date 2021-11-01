@@ -38,7 +38,7 @@ struct backpack
 				index = i;
 			}
 		}
-		cout << "The best current solution: " << endl;
+		cout << "The best current solution is to take items with numbers: " << endl;
 		debug(population[index].sol);
 		cout << "The weight of the best: " <<  population[index].allWeight << endl;
 		return record;
@@ -63,9 +63,10 @@ struct backpack
 		return res;
 	}
 	void debug(vector<bool> vec) {
-		cout << "Vector: " << endl;
 		for (int i = 0; i < vec.size(); i++) {
-			cout << vec[i] << ' ';
+			if (vec[i] == 1) {
+				cout << i << " ";
+			}
 		}
 		cout << endl;
 	}
@@ -113,7 +114,7 @@ struct backpack
 	backpack() {
 		generateItems();
 		startPopulation();
-		for (int iterations = 0; iterations < 1000; iterations++) {
+		for (int iterations = 0; iterations <= 1000; iterations++) {
 			int pos1 = rand() % 100;
 			int pos2 = 0;
 			int maxValue = 0;
@@ -128,12 +129,12 @@ struct backpack
 			solution afterCross = cross(S1, S2);
 			mutation(afterCross);
 			localUpgrade(afterCross);
+			if (!(iterations % 20)) {
+				cout << "The number of iteration: " << iterations << endl;
+				cout << "Record of value: " << record() << endl << endl;
+			}
 			if (afterCross.allWeight <= 250) {
 				add(afterCross);
-				if (!(iterations % 20)) {
-					cout << "The number of iteration: " << iterations << endl;
-					cout << "Record of value: " << record() << endl << endl;
-				}
 			}
 		}
 	}
