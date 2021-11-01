@@ -2,6 +2,7 @@
 #include "item.h"
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "solution.h"
 
 
@@ -12,11 +13,14 @@ struct backpack
 	vector<item>items;
 	vector<solution> population;
 	void generateItems() {
+		ofstream outFile("items.txt");
 		for (int i = 0; i < 100; i++) {
 			int crValue = (rand() % 29) + 2;
 			int crWeight = (rand() % 25) + 1;
+			outFile << i << " Value: " << crValue << " Weight: " << crWeight << endl;
 			items.push_back(item(crValue, crWeight));
 		}
+		outFile.close();
 	}
 	void startPopulation() {
 		for (int i = 0; i < 100; i++) {
@@ -34,7 +38,9 @@ struct backpack
 				index = i;
 			}
 		}
-		cout << "weight: " <<  population[index].allWeight << endl;
+		cout << "The best current solution: " << endl;
+		debug(population[index].sol);
+		cout << "The weight of the best: " <<  population[index].allWeight << endl;
 		return record;
 	}
 	solution cross(solution S1, solution S2) {
@@ -109,7 +115,6 @@ struct backpack
 		startPopulation();
 		for (int iterations = 0; iterations < 1000; iterations++) {
 			int pos1 = rand() % 100;
-			cout << "pos:**************************************" << pos1 << endl;
 			int pos2 = 0;
 			int maxValue = 0;
 			for (int i = 0; i < 100; i++) {
@@ -118,7 +123,6 @@ struct backpack
 					maxValue = population[i].allValue;
 				}
 			}
-			cout << "pos2:???????????????????????"<< pos2 << endl;
 			solution S1 = population[pos1];
 			solution S2 = population[pos2];
 			solution afterCross = cross(S1, S2);
@@ -126,10 +130,10 @@ struct backpack
 			localUpgrade(afterCross);
 			if (afterCross.allWeight <= 250) {
 				add(afterCross);
-				cout << "i------" << iterations << endl;
-				cout << population.size();
-				debug(afterCross.sol);
-				cout << "RECORD:    " << record();
+				if (!(iterations % 20)) {
+					cout << "The number of iteration: " << iterations << endl;
+					cout << "Record of value: " << record() << endl << endl;
+				}
 			}
 		}
 	}
